@@ -1,4 +1,4 @@
-FROM node:4.4
+FROM node:8.11
 
 COPY src /opt/app
 
