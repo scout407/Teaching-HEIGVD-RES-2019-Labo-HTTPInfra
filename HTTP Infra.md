@@ -85,4 +85,14 @@ Celui de 001-reverse-proxy.conf :
 
 Le port d'entrée 80 est pris comme port d'entrée à l'entrée du container, qu'il reste à associer au 8080 qui permet de communiquer avec l'extérieur. Le nom de domaine utilisé pour appeler le serveur proxy est "labo.res.ch". 2 paires de directives gèrent chacune la redirection de requêtes au serveur dynamique express (1ere paire), ainsi que la redirection au serveur statique (2e paire). Les IP pour chaque serveur sont statiquement fixées.
 
+## step 4 : requête ajax
+Nous avons donc nos 2 serveur et notre proxy qui tourne pour avoir un seul point d'entrée. Maintenant pour modifier les informations des pages il nous faut installer vim sur notre machine pour cela il faut rajouter au docker :
+```RUN apt-get update && \ apt-get install -y vim```
+
+Ensuite il faut établire un lien entre nos générations de villes et notre page. Pour cela il nous faut créer un fichier cities.js qui fera les requètes des villes et les envera à la page de manière dynamique.
+Pour que la page puisse utiliser le script il faut rajouter à la fin de notre index.hmtl :
+```< !-- Custom script for load cities -->
+<script src="js/cities.js"></script>```
+
+Une fois ceci réaliser il faut mettre notre image à jour.
 
