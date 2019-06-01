@@ -50,7 +50,39 @@ Les dépendances aux librairies pour le code sont toutes gérées avec les fichi
 
 puis lancer le container avec la commande : 
 ```docker run -p 9090:3000 res/express```
+## step 3 : reverse proxy apache static
+Pour mettre en place un serveur reverse proxy apache, il nous faut activer le module du proxy.
 
+Pour cette étape, le Dockerfile à créer et compléter aura les instructions suivantes :
+```FROM php:7.0-apache
 
+COPY conf/ /etc/apache
+
+RUN a2enmod proxy proxy_http
+RUN a2ensite 000-* 001-*```
+
+On copie des fichiers de configuration générés statiquement pour notre serveur apache. On veut également lancer le programme qui activera les modules proxy et proxy_http pour pouvoir mettre en place notre reverse proxy.
+
+Pour que le serveur soit correctement mis en place, il faut aussi créer une configuration du virtual host, sachant qu'il y a déjà une configuration par défaut. Ce qui fera 2 fichiers de configuration, celui par défaut (000-default.conf) et celui crée (001-reverse-proxy.conf)
+
+Le contenue de 000-default.conf :
+```<VirtualHost *:80>
+</VirtualHost>```
+
+Celui de 001-reverse-proxy.conf :
+```<VirtualHost *:80>
+
+	ServerName labo.res.ch
+	
+	
+	ProxyPass					"/api/students" "http://172.17.0.3.3000/""
+	ProxyPassReverse			"/api/students/" "http://172.17.0.3:3000/"
+	
+	ProxyPass					"/" "http://172.17.0.2:80/"
+	ProxyPassReverse			"/" "http://172.17.0.2:80/"
+
+</VirtualHost>```
+
+Le port d'entrée 80 est pris comme port d'entrée à l'entrée du container, qu'il reste à associer au 8080 qui permet de communiquer avec l'extérieur. Le nom de domaine utilisé pour appeler le serveur proxy est "labo.res.ch". 2 paires de directives gèrent chacune la redirection de requêtes au serveur dynamique express (1ere paire), ainsi que la redirection au serveur statique (2e paire). Les IP pour chaque serveur sont statiquement fixées.
 
 
