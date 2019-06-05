@@ -110,3 +110,25 @@ Pour que la page puisse utiliser le script il faut rajouter à la fin de notre i
 
 Une fois ceci réaliser il faut mettre notre image à jour.
 
+## step 5 : reverse proxy et ip dynamique
+
+Au départ nous devions lancer les dockers dans l'ordre pour avoir les adresses corrects selon nos fichier de configuration, ce n'étais pas pratique.
+Si par mégarde, ou bien pour toutes autres raisons, l'adresse des containers n'étaient pas identiques à ceux du fichier de 001-reverse-proxy.conf alors cela ne fonctionnait pas.
+
+Pour corriger ce problème nous générons un script php qui utilise des variables d'environnement pour réécrire notre fichier 001-reverse-proxy.conf. Ceci mettra donc à jour de manière dynamique les adresses IP attribué.
+
+Dockerfile :
+```
+FROM php:5.6-apache
+
+RUN apt-get update && \
+	apt-get install -y vim
+
+COPY apache2-foreground /usr/local/bin/
+COPY templates /var/apache2/templates
+
+COPY conf/ /etc/apache2
+
+RUN a2enmod proxy proxy_http
+RUN a2ensite 000-* 001-*
+```
