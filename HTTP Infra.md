@@ -53,13 +53,13 @@ Les dépendances aux librairies pour le code sont toutes gérées avec les fichi
 `docker build -t res/express .` si depuis le dossier du dockerfile.
 
 puis lancer le container avec la commande : 
-```docker run -p 9090:3000 res/express```
+```docker run -d -p 9090:3000 res/express```
 ## step 3 : reverse proxy apache static
 Pour mettre en place un serveur reverse proxy apache, il nous faut activer le module du proxy.
 
 Pour cette étape, le Dockerfile à créer et compléter aura les instructions suivantes :
 ```
-FROM php:7.0-apache
+FROM php:5.6-apache
 
 COPY conf/ /etc/apache
 
