@@ -132,3 +132,24 @@ COPY conf/ /etc/apache2
 RUN a2enmod proxy proxy_http
 RUN a2ensite 000-* 001-*
 ```
+
+Load Balancer
+Nous voulons avoir la possibilité d'ajouter plusieurs serveurs (statiques ou dynamiques), ce qui répartirait la charge des requêtes, et donc il faut modifier le Dockerfile du reverse proxy, pour qu'il puisse gérer cette fonctionnalité.
+
+Maintenant que c'est fait, il faut modifier le script php, afin qu'il puisse traiter 3 paires d'adresses IP pour 6 serveurs, qui se répartiront la charge entre eux (3 serveurs apache statiques, et 3 serveurs express dynamiques).
+
+Ce script modifié permet de distribuer les requêtes entre les serveurs disponibles. Cela est vérifiable en ajoutant l'IP du serveur qui est sollicité en titre de page (pour le statique), et dans le JSON (pour le dynamique). En actualisant plusieurs fois l'affichage nosu pouvons constater que l'adresse change parfois. On peut donc en conclure que la charge (en terme de nombre de requêtes attribuées à un serveur disponible) est bel et bien répartie.
+
+Source nous ayant aidé pour la solution :
+
+https://support.rackspace.com/how-to/simple-load-balancing-with-apache/
+
+
+Management UI
+Vidéo qui nous a aidé pour trouver la solution :
+
+https://www.youtube.com/watch?v=GNG6PDFxQyQ
+
+La commande à effectuer tient en une ligne, bien qu'assez complexe :
+
+docker run -it -d —name portainer -v /var/run/docker.sock:/var/run/docker.sock -p 9000:9000 portainer/portainer
